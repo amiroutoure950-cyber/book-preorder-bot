@@ -171,27 +171,43 @@ from telegram.ext import (
 
 logger = logging.getLogger(__name__)
 
-WELCOME_TEMPLATE = """📖 *LE FOREX SANS ILLUSION*
+WELCOME_TEXT = """*Le Forex sans illusion*
 
-Comprendre le marché des changes, protéger son capital et apprendre à trader avec méthode.
+Vous avez découvert le trading sur les réseaux sociaux, dans des vidéos ou à travers des captures d’écran de gains rapides ?
 
-Un livre de Hamma Dit Amirou Toure pour sortir des promesses faciles et construire une vraie compréhension du trading.
+On vous a peut-être fait croire qu’il suffisait de trouver la bonne stratégie, de suivre un signal ou de cliquer au bon moment pour réussir.
 
-✅ Le Forex expliqué avec des mots simples
-✅ Psychologie, discipline et habitudes du trader
-✅ Gestion du risque et protection du capital
-✅ Prix, volume, sentiment et macroéconomie
-✅ Méthode, journal de trading et progression durable
+La réalité est différente.
 
-Ce livre ne promet pas de gains garantis. Il vous aide à développer un cadre de réflexion plus lucide, plus discipliné et plus professionnel.
+Le trading n’est pas un raccourci vers la richesse. C’est une activité qui demande de comprendre le marché, de gérer l’incertitude, de protéger son capital et de prendre des décisions avec méthode.
 
-💰 *Précommande : {fcfa} FCFA ou {usdt} USDT*
+Le Forex sans illusion a été écrit pour les débutants qui veulent apprendre sérieusement, sans promesses irréalistes ni vocabulaire inutilement compliqué.
 
-Remplissez vos informations pour réserver votre exemplaire :"""
+L’objectif n’est pas de vous faire croire que vous pourrez prévoir chaque mouvement. L’objectif est de vous aider à construire une manière de travailler plus claire, plus prudente et plus vérifiable.
+
+*Une progression pensée pour les vrais débutants*
+
+Le livre avance étape par étape.
+
+Vous commencerez par les bases mentales du trading : les illusions, les attentes irréalistes, la difficulté réelle de l’activité et la différence entre un gain ponctuel et une compétence durable.
+
+Vous apprendrez ensuite ce qu’est le Forex, comment lire une paire de devises et pourquoi les prix bougent.
+
+Puis viendra la partie la plus importante pour votre survie : la gestion du risque.
+
+Vous découvrirez comment réfléchir à une perte avant qu’elle n’arrive, comment dimensionner une position et pourquoi rester dans le jeu est plus important que chercher à gagner rapidement.
+
+Enfin, le livre vous guidera vers la construction d’une méthode et la lecture pratique des graphiques.
+
+*Un guide écrit pour les débutants qui veulent apprendre sérieusement*
+
+💰 Précommande : {fcfa} FCFA ou {usdt} USDT
+
+Précommandez maintenant votre exemplaire."""
 
 
 def welcome_text() -> str:
-    return WELCOME_TEMPLATE.format(fcfa=format_amount(BOOK.fcfa), usdt=BOOK.usdt)
+    return WELCOME_TEXT.format(fcfa=format_amount(BOOK.fcfa), usdt=BOOK.usdt)
 
 
 def methods_keyboard() -> InlineKeyboardMarkup:
@@ -218,9 +234,15 @@ def begin_collection(context: ContextTypes.DEFAULT_TYPE):
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.effective_message.reply_photo(
-        photo=Path(context.application.bot_data["config"].cover_path).open("rb"),
-        caption=welcome_text(),
+    cfg: Config = context.application.bot_data["config"]
+    with cfg.cover_path.open("rb") as cover:
+        await update.effective_message.reply_photo(
+            photo=cover,
+            caption=f"📖 *{BOOK.title.upper()}*\n\nPar {BOOK.author}",
+            parse_mode=ParseMode.MARKDOWN,
+        )
+    await update.effective_message.reply_text(
+        welcome_text(),
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=start_keyboard(),
     )

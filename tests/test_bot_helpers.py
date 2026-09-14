@@ -8,9 +8,11 @@ class BotHelperTests(unittest.TestCase):
         keyboard = start_keyboard()
         self.assertEqual(keyboard.inline_keyboard[0][0].callback_data, "begin")
 
-    def test_welcome_mentions_book_and_price(self):
+    def test_welcome_contains_requested_sales_copy(self):
         text = welcome_text()
-        self.assertIn("LE FOREX SANS ILLUSION", text)
+        self.assertIn("Vous avez découvert le trading sur les réseaux sociaux", text)
+        self.assertIn("Une progression pensée pour les vrais débutants", text)
+        self.assertIn("Précommandez maintenant votre exemplaire", text)
         self.assertIn("12 500 FCFA", text)
         self.assertIn("25 USDT", text)
 
